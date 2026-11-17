@@ -1,0 +1,156 @@
+{
+  "entities": {
+    "UserWorkspace": {
+      "title": "UserWorkspace",
+      "description": "User profile, connected YouTube channel summary, AI auto-reply settings, and telemetry counters.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Firebase Auth UID of the owner." },
+        "displayName": { "type": "string", "description": "User display name." },
+        "email": { "type": "string", "description": "User email address." },
+        "photoUrl": { "type": "string", "description": "User Google avatar URL." },
+        "connectedChannelId": { "type": "string", "description": "Selected YouTube channel ID." },
+        "connectedChannelTitle": { "type": "string", "description": "Selected YouTube channel title." },
+        "connectedChannelHandle": { "type": "string", "description": "YouTube channel custom handle." },
+        "connectedChannelAvatarUrl": { "type": "string", "description": "YouTube channel thumbnail URL." },
+        "subscriberCount": { "type": "integer", "description": "YouTube channel subscriber count." },
+        "videoCount": { "type": "integer", "description": "YouTube channel public video count." },
+        "channelConnected": { "type": "boolean", "description": "Whether a YouTube channel is connected." },
+        "autoReplyEnabled": { "type": "boolean", "description": "Whether AI auto-reply is active." },
+        "autoReplyIntervalMinutes": { "type": "integer", "description": "Background polling interval in minutes." },
+        "ignoreSpam": { "type": "boolean", "description": "Whether spam comments are automatically ignored." },
+        "ignoreAbusive": { "type": "boolean", "description": "Whether abusive comments are automatically ignored." },
+        "avoidDuplicates": { "type": "boolean", "description": "Whether already-replied comments are skipped." },
+        "primaryLanguage": {
+          "type": "string",
+          "enum": ["AUTO", "HINDI", "HINGLISH", "ENGLISH"],
+          "description": "Language mode for AI comment replies."
+        },
+        "customPrompt": { "type": "string", "description": "Custom system prompt for GR GAMER AI." },
+        "totalCommentsReceived": { "type": "integer", "description": "Total YouTube comments fetched." },
+        "totalRepliesSent": { "type": "integer", "description": "Total AI replies successfully posted." },
+        "pendingCommentsCount": { "type": "integer", "description": "Current pending comments count." },
+        "failedRepliesCount": { "type": "integer", "description": "Total failed reply attempts." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp on creation." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp on last update." }
+      },
+      "required": [
+        "userId",
+        "displayName",
+        "channelConnected",
+        "autoReplyEnabled",
+        "autoReplyIntervalMinutes",
+        "ignoreSpam",
+        "ignoreAbusive",
+        "avoidDuplicates",
+        "primaryLanguage",
+        "customPrompt",
+        "totalCommentsReceived",
+        "totalRepliesSent",
+        "pendingCommentsCount",
+        "failedRepliesCount",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "CommentRecord": {
+      "title": "CommentRecord",
+      "description": "A fetched YouTube comment tracked for AI moderation and reply status.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Owner Firebase UID." },
+        "youtubeCommentId": { "type": "string", "description": "Original YouTube comment ID." },
+        "channelId": { "type": "string", "description": "YouTube channel ID." },
+        "videoId": { "type": "string", "description": "YouTube video ID." },
+        "videoTitle": { "type": "string", "description": "YouTube video title or ID label." },
+        "authorName": { "type": "string", "description": "Comment author display name." },
+        "authorAvatarUrl": { "type": "string", "description": "Comment author avatar URL." },
+        "commentText": { "type": "string", "description": "Original comment text." },
+        "detectedLanguage": {
+          "type": "string",
+          "enum": ["ENGLISH", "HINDI", "HINGLISH", "UNKNOWN"],
+          "description": "Detected language of the comment."
+        },
+        "classification": {
+          "type": "string",
+          "enum": ["NORMAL", "SPAM", "ABUSIVE"],
+          "description": "AI safety classification."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["PENDING", "REPLIED", "IGNORED_SPAM", "IGNORED_ABUSIVE", "FAILED", "SKIPPED_DUPLICATE"],
+          "description": "Processing status of the comment."
+        },
+        "generatedReply": { "type": "string", "description": "AI-generated reply text." },
+        "errorMessage": { "type": "string", "description": "Failure reason if status is FAILED." },
+        "publishedAtText": { "type": "string", "description": "YouTube published timestamp ISO string." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp on creation." },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp on last update." }
+      },
+      "required": [
+        "userId",
+        "youtubeCommentId",
+        "channelId",
+        "videoId",
+        "authorName",
+        "commentText",
+        "detectedLanguage",
+        "classification",
+        "status",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "ReplyHistoryItem": {
+      "title": "ReplyHistoryItem",
+      "description": "Immutable log entry for an AI reply attempt.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Owner Firebase UID." },
+        "youtubeCommentId": { "type": "string", "description": "Original YouTube comment ID." },
+        "channelId": { "type": "string", "description": "YouTube channel ID." },
+        "videoTitle": { "type": "string", "description": "Video label." },
+        "authorName": { "type": "string", "description": "Comment author name." },
+        "originalComment": { "type": "string", "description": "Original YouTube comment text." },
+        "replyText": { "type": "string", "description": "Generated AI reply text." },
+        "language": {
+          "type": "string",
+          "enum": ["ENGLISH", "HINDI", "HINGLISH"],
+          "description": "Language used in the reply."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["SENT", "FAILED"],
+          "description": "Delivery status."
+        },
+        "errorMessage": { "type": "string", "description": "Error detail if FAILED." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp on creation." }
+      },
+      "required": [
+        "userId",
+        "youtubeCommentId",
+        "channelId",
+        "authorName",
+        "originalComment",
+        "replyText",
+        "language",
+        "status",
+        "createdAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserWorkspace" },
+      "description": "User workspace storing channel connection, settings, prompt, and live telemetry."
+    },
+    "/users/{userId}/comments/{commentId}": {
+      "schema": { "$ref": "#/entities/CommentRecord" },
+      "description": "Fetched YouTube comments and their AI reply states."
+    },
+    "/users/{userId}/replyHistory/{historyId}": {
+      "schema": { "$ref": "#/entities/ReplyHistoryItem" },
+      "description": "Audit log of AI replies sent or failed."
+    }
+  }
+}
